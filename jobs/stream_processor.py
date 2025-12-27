@@ -85,12 +85,13 @@ def main():
     """)
 
     # Simple transformation: filter frauds
-    t_env.execute_sql(
+    # execute_sql returns a TableResult; call wait() to keep the job running
+    table_result = t_env.execute_sql(
         "INSERT INTO output_table SELECT * FROM input_table WHERE is_fraudulent = 1"
     )
-
-    # keep the job running
-    t_env.execute("fraud-filter-job")
+    
+    # Wait for the job to complete (runs until cancelled)
+    table_result.wait()
 
 
 if __name__ == '__main__':
